@@ -16,10 +16,11 @@ func main() {
 		gophersAPIPort := cfg.RequireFloat64("gophersAPIPort")
 		gophersAPIWatcherPort := cfg.RequireFloat64("gophersAPIWatcherPort")
 		//TODO: temp
-		_ = gophersAPIPort + gophersAPIWatcherPort
+		_ = gophersAPIWatcherPort
 
 		// Pull the Gophers API image
 		gophersAPIImageName := "gophers-api"
+		//TODO: set platform?
 		gophersAPIImage, err := docker.NewRemoteImage(ctx, fmt.Sprintf("%v-image", gophersAPIImageName), &docker.RemoteImageArgs{
 			Name: pulumi.String("scraly/" + gophersAPIImageName + ":latest"),
 		})
@@ -46,6 +47,62 @@ func main() {
 			return err
 		}
 		ctx.Export("containerNetwork", network.Name)
+
+		// Create the gophers API container
+		// Use _ instead of a variable name since this container isn't referenced
+
+		//TODO: set platform
+		_, err = docker.NewContainer(ctx, "gophers-api", &docker.ContainerArgs{
+			Name:  pulumi.String(fmt.Sprintf("gophers-api-%v", ctx.Stack())),
+			Image: gophersAPIImage.RepoDigest,
+			Ports: &docker.ContainerPortArray{
+				&docker.ContainerPortArgs{
+					Internal: pulumi.Int(gophersAPIPort),
+					External: pulumi.Int(gophersAPIPort),
+				},
+			},
+			NetworksAdvanced: &docker.ContainerNetworksAdvancedArray{
+				&docker.ContainerNetworksAdvancedArgs{
+					Name: network.Name,
+					Aliases: pulumi.StringArray{
+						pulumi.String(fmt.Sprintf("gophers-api-%v", ctx.Stack())),
+					},
+				},
+			},
+		})
+		if err != nil {
+			return err
+		}
+
+		/*
+					// Create the frontend container
+			_, err = docker.NewContainer(ctx, "frontend-container", &docker.ContainerArgs{
+				Name:  pulumi.String(fmt.Sprintf("frontend-%v", ctx.Stack())),
+				Image: frontendImage.RepoDigest,
+				Ports: &docker.ContainerPortArray{
+					&docker.ContainerPortArgs{
+						Internal: pulumi.Int(frontendPort),
+						External: pulumi.Int(frontendPort),
+					},
+				},
+				Envs: pulumi.StringArray{
+					pulumi.String(fmt.Sprintf("PORT=%v", frontendPort)),
+					pulumi.String(fmt.Sprintf("HTTP_PROXY=backend-%v:%v", ctx.Stack(), backendPort)),
+					pulumi.String(fmt.Sprintf("PROXY_PROTOCOL=%v", protocol)),
+				},
+				NetworksAdvanced: &docker.ContainerNetworksAdvancedArray{
+					&docker.ContainerNetworksAdvancedArgs{
+						Name: network.Name,
+						Aliases: pulumi.StringArray{
+							pulumi.String(fmt.Sprintf("frontend-%v", ctx.Stack())),
+						},
+					},
+				},
+			})
+			if err != nil {
+				return err
+			}
+		*/
 
 		return nil
 	})
