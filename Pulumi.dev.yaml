@@ -1,0 +1,3 @@
+config:
+  pulumi-gophers:gophersAPIPort: "8080"
+  pulumi-gophers:gophersAPIWatcherPort: "8000"
