@@ -36,7 +36,7 @@ $ pulumi config set gophersAPIPort 8080
 $ pulumi config set gophersAPIWatcherPort 8000
 ```
 
-Ask Go to download dependencies and update `go.mod`  file:
+Ask Go to download dependencies and update `go.mod` file:
 
 ```bash
 go mod tidy

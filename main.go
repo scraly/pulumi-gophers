@@ -13,6 +13,10 @@ func main() {
 
 		//Configuration
 		protocol := "http://"
+		//tag := "latest"
+		//for GitPod!
+		tag := "linux-amd64"
+
 		cfg := config.New(ctx, "")
 		gophersAPIPort := cfg.RequireFloat64("gophersAPIPort")
 		gophersAPIWatcherPort := cfg.RequireFloat64("gophersAPIWatcherPort")
@@ -23,7 +27,7 @@ func main() {
 		gophersAPIImageName := "gophers-api"
 		//TODO: set platform?
 		gophersAPIImage, err := docker.NewRemoteImage(ctx, fmt.Sprintf("%v-image", gophersAPIImageName), &docker.RemoteImageArgs{
-			Name: pulumi.String("scraly/" + gophersAPIImageName + ":latest"),
+			Name: pulumi.String("scraly/" + gophersAPIImageName + ":" + tag),
 		})
 		if err != nil {
 			return err
@@ -33,7 +37,7 @@ func main() {
 		// Pull the Gophers API Watcher (frontend/UI) image
 		gophersAPIWatcherImageName := "gophers-api-watcher"
 		gophersAPIWatcherImage, err := docker.NewRemoteImage(ctx, fmt.Sprintf("%v-image", gophersAPIWatcherImageName), &docker.RemoteImageArgs{
-			Name: pulumi.String("scraly/" + gophersAPIWatcherImageName + ":latest"),
+			Name: pulumi.String("scraly/" + gophersAPIWatcherImageName + ":" + tag),
 		})
 		if err != nil {
 			return err
