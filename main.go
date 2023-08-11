@@ -76,8 +76,8 @@ func main() {
 		}
 
 		// Create the frontend container
-		_, err = docker.NewContainer(ctx, "frontend-container", &docker.ContainerArgs{
-			Name:  pulumi.String(fmt.Sprintf("frontend-%v", ctx.Stack())),
+		_, err = docker.NewContainer(ctx, "gophers-api-watcher", &docker.ContainerArgs{
+			Name:  pulumi.String(fmt.Sprintf("gophers-api-watcher-%v", ctx.Stack())),
 			Image: gophersAPIWatcherImage.RepoDigest,
 			Ports: &docker.ContainerPortArray{
 				&docker.ContainerPortArgs{
