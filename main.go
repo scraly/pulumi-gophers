@@ -12,6 +12,7 @@ func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 
 		//Configuration
+		protocol := "http://"
 		cfg := config.New(ctx, "")
 		gophersAPIPort := cfg.RequireFloat64("gophersAPIPort")
 		gophersAPIWatcherPort := cfg.RequireFloat64("gophersAPIWatcherPort")
@@ -74,35 +75,33 @@ func main() {
 			return err
 		}
 
-		/*
-					// Create the frontend container
-			_, err = docker.NewContainer(ctx, "frontend-container", &docker.ContainerArgs{
-				Name:  pulumi.String(fmt.Sprintf("frontend-%v", ctx.Stack())),
-				Image: frontendImage.RepoDigest,
-				Ports: &docker.ContainerPortArray{
-					&docker.ContainerPortArgs{
-						Internal: pulumi.Int(frontendPort),
-						External: pulumi.Int(frontendPort),
+		// Create the frontend container
+		_, err = docker.NewContainer(ctx, "frontend-container", &docker.ContainerArgs{
+			Name:  pulumi.String(fmt.Sprintf("frontend-%v", ctx.Stack())),
+			Image: gophersAPIWatcherImage.RepoDigest,
+			Ports: &docker.ContainerPortArray{
+				&docker.ContainerPortArgs{
+					Internal: pulumi.Int(gophersAPIWatcherPort),
+					External: pulumi.Int(gophersAPIWatcherPort),
+				},
+			},
+			Envs: pulumi.StringArray{
+				pulumi.String(fmt.Sprintf("PORT=%v", gophersAPIWatcherPort)),
+				pulumi.String(fmt.Sprintf("HTTP_PROXY=backend-%v:%v", ctx.Stack(), gophersAPIPort)),
+				pulumi.String(fmt.Sprintf("PROXY_PROTOCOL=%v", protocol)),
+			},
+			NetworksAdvanced: &docker.ContainerNetworksAdvancedArray{
+				&docker.ContainerNetworksAdvancedArgs{
+					Name: network.Name,
+					Aliases: pulumi.StringArray{
+						pulumi.String(fmt.Sprintf("gophers-api-watcher-%v", ctx.Stack())),
 					},
 				},
-				Envs: pulumi.StringArray{
-					pulumi.String(fmt.Sprintf("PORT=%v", frontendPort)),
-					pulumi.String(fmt.Sprintf("HTTP_PROXY=backend-%v:%v", ctx.Stack(), backendPort)),
-					pulumi.String(fmt.Sprintf("PROXY_PROTOCOL=%v", protocol)),
-				},
-				NetworksAdvanced: &docker.ContainerNetworksAdvancedArray{
-					&docker.ContainerNetworksAdvancedArgs{
-						Name: network.Name,
-						Aliases: pulumi.StringArray{
-							pulumi.String(fmt.Sprintf("frontend-%v", ctx.Stack())),
-						},
-					},
-				},
-			})
-			if err != nil {
-				return err
-			}
-		*/
+			},
+		})
+		if err != nil {
+			return err
+		}
 
 		return nil
 	})
