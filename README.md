@@ -1,5 +1,9 @@
 # pulumi-gophers
 
+This repo allows you to deploy your apps with Pulumi and the Docker Pulumi provider.
+
+Please read the article in order to understand everything about this code :-).
+
 ## Pre-requisites
 
 * Install pulumi CLI:
