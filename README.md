@@ -17,7 +17,7 @@ brew install pulumi/tap/pulumi
 Init the project:
 
 ```
-pulumi new go --force
+$ pulumi new go --force
 ```
 
 Get the dependencies:
@@ -39,17 +39,19 @@ $ pulumi config set gophersAPIWatcherPort 8000
 Ask Go to download dependencies and update `go.mod` file:
 
 ```bash
-go mod tidy
+$ go mod tidy
 ```
 
 Deploy:
 
 ```bash
-pulumi up
+$ pulumi up
 ```
 
 ## Cleanup
 
-pulumi destroy
+```bash
+$ pulumi destroy
+```
 
 ## Usage
