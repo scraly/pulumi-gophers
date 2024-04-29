@@ -22,14 +22,14 @@ Init/log in the project:
 $ pulumi login --local
 ```
 
-Deploy:
+Create a new stack called "gophers" and deploy:
 
 ```bash
-$ pulumi up
+$ pulumi up -s gophers
 ```
 
 ## Cleanup
 
 ```bash
-$ pulumi destroy
+$ pulumi destroy -s gophers
 ```
